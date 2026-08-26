@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Kasatria Assignment</title>
+
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, user-scalable=no,
+        minimum-scale=1.0, maximum-scale=1.0">
+
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            background-color: #000;
+            margin: 0;
+            font-family: Helvetica, sans-serif;
+            overflow: hidden;
+        }
+
+        a {
+            color: #8ff;
+        }
+
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: auto;
+            color: rgba(255, 255, 255, 0.75);
+            text-align: left;
+            z-index: 10;
+            font-family: Monospace;
+            font-size: 20px;
+            pointer-events: none;
+        }
+
+        #status {
+            margin-top: 3px;
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 15px;
+            font-weight: normal;
+        }
+
+        #container {
+            width: 100%;
+            height: 100%;
+            visibility: hidden;
+        }
+
+        #welcomeOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.88);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            z-index: 1000;
+
+            /* IMPORTANT */
+            pointer-events: auto;
+        }
+
+        #welcomeBox {
+            width: 420px;
+            max-width: 85%;
+            padding: 30px 35px;
+
+            text-align: center;
+
+            background: rgba(10, 10, 10, 0.97);
+
+            border: 1px solid rgba(127, 255, 255, 0.75);
+            border-radius: 8px;
+
+            box-shadow:
+                0 0 25px rgba(0, 255, 255, 0.25);
+
+            font-family: Monospace;
+
+            pointer-events: auto;
+        }
+
+        #welcomeTitle {
+            color: rgba(127, 255, 255, 0.95);
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        #welcomeMessage {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 14px;
+            line-height: 22px;
+            margin-bottom: 25px;
+        }
+
+        #welcomeGoogleButton {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 44px;
+            pointer-events: auto;
+        }
+
+        #menu {
+            position: absolute;
+            bottom: 45px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        button {
+            color: rgba(127, 255, 255, 0.75);
+            background: rgba(0, 0, 0, 0.25);
+            outline: 1px solid rgba(127, 255, 255, 0.75);
+            border: 0;
+            padding: 7px 14px;
+            cursor: pointer;
+            margin: 4px;
+            font-family: Monospace;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: rgba(0, 255, 255, 0.5);
+        }
+
+        button:active {
+            color: #000;
+            background-color: rgba(0, 255, 255, 0.75);
+        }
+
+        #login {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            z-index: 20;
+            padding: 3px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        #googleButton {
+            transform: scale(0.8);
+            transform-origin: right center;
+        }
+
+        #authorizeButton,
+        #signout {
+            font-size: 14px;
+            padding: 7px 12px;
+            margin: 0;
+        }
+
+        #signout {
+            display: none;
+        }
+
+        #authorizeButton {
+            display: none;
+        }
+
+        .element {
+            width: 95px;
+            height: 125px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+            border-radius: 5px;
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: box-shadow 0.2s ease;
+        }
+
+        .element:hover {
+            box-shadow: 0 0 16px rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+        }
+
+        .photo {
+            width: 36px;
+            height: 36px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-top: 7px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .name {
+            margin-top: 5px;
+            padding: 0 3px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .details {
+            margin-top: 5px;
+            padding: 0 5px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 8px;
+            line-height: 12px;
+        }
+
+        .worth {
+            margin-top: 3px;
+            font-weight: bold;
+            color: white;
+            font-size: 8px;
+        }
+
+        #footer {
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: Monospace;
+            font-size: 11px;
+            line-height: 18px;
+            z-index: 30;
+            pointer-events: auto;
+        }
+
+        #footer a {
+            color: rgba(127, 255, 255, 0.85);
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        #footer a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="welcomeOverlay">
+        <div id="welcomeBox">
+
+            <div id="welcomeTitle">
+                Welcome to DEpthView
+            </div>
+
+            <div id="welcomeMessage">
+                Please sign in with your Google account
+                to access the 3D data visualization.
+            </div>
+
+            <div id="welcomeGoogleButton"></div>
+
+        </div>
+    </div>
+
+    <div id="info">
+        KASATRIA 3D DATA VISUALISATION
+        <div id="status">
+            Please sign in with Google.
+        </div>
+
+    </div>
+
+
+    <div id="login">
+        <div id="googleButton"></div>
+        <button id="authorizeButton" style="display:none;">
+            Authorize Google Sheets
+        </button>
+
+        <button id="signout">
+            Sign Out
+        </button>
+
+    </div>
+
+
+    <div id="container"></div>
+
+
+    <div id="menu">
+
+        <button id="table">
+
+            TABLE
+
+        </button>
+
+        <button id="sphere">
+
+            SPHERE
+
+        </button>
+
+        <button id="helix">
+
+            HELIX
+
+        </button>
+
+        <button id="grid">
+            GRID
+        </button>
+    </div>
+
+    //Google Identity Services
+    <script async defer src="https://apis.google.com/js/api.js">
+    </script>
+
+    <script async defer src="https://accounts.google.com/gsi/client">
+    </script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+            }
+        }
+    
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        import {
+            CSS3DRenderer,
+            CSS3DObject
+        } from 'three/addons/renderers/CSS3DRenderer.js';
+
+        import {
+            TrackballControls
+        } from 'three/addons/controls/TrackballControls.js';
+
+        /* =====================================================
+           GOOGLE CONFIGURATION
+        ===================================================== */
+
+        const CONFIG = {
+            CLIENT_ID:
+                '49516764900-hl8benurb7sknbn1b36h0j7fa52iu8am.apps.googleusercontent.com',
+
+            API_KEY:
+                'AIzaSyCnj3VDnj8ZkdFcK7sE1sepPwh4svFRiCM',
+
+            SPREADSHEET_ID:
+                '1fGA23_43cB905azobRWAA7eNfMm2JnnOQhOPnPoq0A4',
+
+            RANGE:
+                'Data Template!A1:F201'
+
+        };
+
+        const DISCOVERY_DOC =
+            'https://sheets.googleapis.com/$discovery/rest?version=v4';
+
+        const SCOPES =
+            'https://www.googleapis.com/auth/spreadsheets.readonly';
+
+        let tokenClient;
+
+        let gapiInited = false;
+
+        let gisInited = false;
+
+        let googleInitialized = false;
+
+        let camera;
+
+        let scene;
+
+        let renderer;
+
+        let controls;
+
+        let objects = [];
+
+
+        let targets = {
+
+            table: [],
+
+            sphere: [],
+
+            helix: [],
+
+            grid: []
+
+        };
+
+        init();
+
+        animate();
+
+        function init() {
+
+            camera = new THREE.PerspectiveCamera(
+                40,
+                window.innerWidth /
+                window.innerHeight,
+                1,
+                10000
+            );
+
+            camera.position.z = 3000;
+            scene = new THREE.Scene();
+            renderer =
+                new CSS3DRenderer();
+
+            renderer.setSize(
+                window.innerWidth,
+                window.innerHeight
+            );
+
+            document
+                .getElementById('container')
+                .appendChild(
+                    renderer.domElement
+                );
+
+            controls =
+                new TrackballControls(
+                    camera,
+                    renderer.domElement
+                );
+
+            controls.rotateSpeed = 0.5;
+            controls.minDistance = 500;
+            controls.maxDistance = 6000;
+
+            controls.addEventListener(
+                'change',
+                render
+            );
+
+            document
+                .getElementById('table')
+                .addEventListener(
+                    'click',
+                    () => {
+                        transform(
+                            targets.table,
+                            1500
+                        );
+                    }
+                );
+
+
+            document
+                .getElementById('sphere')
+                .addEventListener(
+                    'click',
+                    () => {
+                        transform(
+                            targets.sphere,
+                            1500
+                        );
+                    }
+                );
+
+            document
+                .getElementById('helix')
+                .addEventListener(
+                    'click',
+                    () => {
+                        transform(
+                            targets.helix,
+                            1500
+                        );
+                    }
+                );
+
+            document
+                .getElementById('grid')
+                .addEventListener(
+                    'click',
+                    () => {
+                        transform(
+                            targets.grid,
+                            1500
+                        );
+                    }
+                );
+
+            window.addEventListener(
+                'resize',
+                onWindowResize
+            );
+
+            // Initialize Google APIs separately
+
+            // Google Sheets API
+            const checkGapi = setInterval(() => {
+
+                if (window.gapi) {
+
+                    clearInterval(checkGapi);
+
+                    gapi.load(
+                        'client',
+                        initializeGapiClient
+                    );
+
+                }
+
+            }, 100);
+
+            // Google Identity Services
+            initializeGoogle();
+        }
+
+        function gapiLoaded() {
+            gapi.load('client', initializeGapiClient);
+        }
+
+        async function initializeGapiClient() {
+            try {
+                await gapi.client.init({
+                    apiKey: CONFIG.API_KEY,
+                    discoveryDocs: [DISCOVERY_DOC]
+                });
+
+                gapiInited = true;
+                maybeInitializeGoogle();
+
+            } catch (error) {
+                console.error("GAPI initialization failed:", error);
+
+                document.getElementById('status').textContent =
+                    'Google API initialization failed.';
+            }
+        }
+
+        function initializeGIS() {
+
+            try {
+
+                // OAuth token client for Google Sheets
+                tokenClient =
+                    google.accounts.oauth2.initTokenClient({
+
+                        client_id: CONFIG.CLIENT_ID,
+
+                        scope: SCOPES,
+
+                        callback: ''
+                    });
+
+                gisInited = true;
+
+                // Initialize Google Sign-In immediately
+                google.accounts.id.initialize({
+
+                    client_id: CONFIG.CLIENT_ID,
+
+                    callback: handleCredentialResponse
+
+                });
+
+                // Render Google Sign-In button
+                google.accounts.id.renderButton(
+
+                    document.getElementById(
+                        'welcomeGoogleButton'
+                    ),
+
+                    {
+                        theme: 'outline',
+                        size: 'large',
+                        text: 'signin_with',
+                        shape: 'rectangular',
+                        width: 260
+                    }
+
+                );
+
+                console.log(
+                    'Google Sign-In initialized successfully.'
+                );
+
+            }
+            catch (error) {
+
+                console.error(
+                    'GIS initialization failed:',
+                    error
+                );
+
+                document.getElementById(
+                    'status'
+                ).textContent =
+                    'Google Sign-In initialization failed.';
+
+            }
+
+        }
+
+        function initializeGoogle() {
+
+            const checkGoogle = setInterval(() => {
+
+                // Google Identity Services
+                if (
+                    window.google &&
+                    window.google.accounts &&
+                    window.google.accounts.id
+                ) {
+
+                    clearInterval(checkGoogle);
+
+                    initializeGIS();
+
+                }
+
+            }, 100);
+
+        }
+
+        // Google Login
+        function handleCredentialResponse(response) {
+
+            console.log(
+                'Google account selected successfully.'
+            );
+
+            document.getElementById(
+                'status'
+            ).textContent =
+                'Google account selected. Please authorize Google Sheets.';
+
+            // Hide welcome screen
+            document.getElementById(
+                'welcomeOverlay'
+            ).style.display = 'none';
+
+            // Hide old Google button
+            document.getElementById(
+                'googleButton'
+            ).style.display = 'none';
+
+            // Show Google Sheets authorization
+            document.getElementById(
+                'authorizeButton'
+            ).style.display = 'inline-block';
+
+            // Sign Out remains hidden
+            document.getElementById(
+                'signout'
+            ).style.display = 'none';
+
+            document.getElementById(
+                'authorizeButton'
+            ).onclick =
+                requestSheetsAccess;
+
+        }
+
+        function requestSheetsAccess() {
+
+            if (!gapiInited) {
+
+                document.getElementById(
+                    'status'
+                ).textContent =
+                    'Google Sheets API is still initializing. Please try again.';
+
+                return;
+            }
+
+            tokenClient.callback = async response => {
+
+                if (response.error) {
+
+                    console.error(
+                        'Google Sheets authorization error:',
+                        response
+                    );
+
+                    document.getElementById(
+                        'status'
+                    ).textContent =
+                        'Google Sheets authorization failed.';
+
+                    return;
+                }
+
+                // Set OAuth token
+                gapi.client.setToken(response);
+
+                // Hide authorization button
+                document.getElementById(
+                    'authorizeButton'
+                ).style.display = 'none';
+
+                document.getElementById(
+                    'status'
+                ).textContent =
+                    'Loading Google Sheet...';
+
+                // Load spreadsheet
+                await loadGoogleSheet();
+
+            };
+
+            tokenClient.requestAccessToken({
+
+                prompt: 'consent'
+
+            });
+
+        }
+
+        // Google Sheet
+        async function loadGoogleSheet() {
+
+            try {
+
+                const response =
+                    await gapi.client
+                        .sheets.spreadsheets.values
+                        .get({
+
+                            spreadsheetId:
+                                CONFIG.SPREADSHEET_ID,
+
+                            range:
+                                CONFIG.RANGE
+
+                        });
+
+                const values =
+                    response.result.values;
+
+                if (
+                    !values ||
+                    values.length < 2
+                ) {
+
+                    throw new Error(
+                        'No spreadsheet data found.'
+                    );
+
+                }
+
+                const records = [];
+
+                for (
+                    let i = 1;
+                    i < values.length;
+                    i++
+                ) {
+
+                    const row = values[i];
+
+                    const person = {
+
+                        name:
+                            row[0] || '',
+
+                        photo:
+                            row[1] || '',
+
+                        age:
+                            Number(row[2]) || 0,
+
+                        country:
+                            row[3] || '',
+
+                        interest:
+                            row[4] || '',
+
+                        netWorth:
+                            parseNetWorth(row[5])
+
+                    };
+
+                    if (person.name) {
+
+                        records.push(person);
+
+                    }
+
+                }
+
+                // Create 3D objects
+                createObjects(records);
+
+                // Show visualization
+                document.getElementById(
+                    'container'
+                ).style.visibility = 'visible';
+
+                // Show Sign Out
+                document.getElementById(
+                    'signout'
+                ).style.display = 'inline-block';
+
+                document.getElementById(
+                    'status'
+                ).textContent =
+                    `Loaded ${records.length} records from Google Sheets.`;
+
+                render();
+
+            }
+            catch (error) {
+
+                console.error(
+                    'Google Sheet loading failed:',
+                    error
+                );
+
+                document.getElementById(
+                    'container'
+                ).style.visibility = 'hidden';
+
+                document.getElementById(
+                    'signout'
+                ).style.display = 'none';
+
+                document.getElementById(
+                    'status'
+                ).textContent =
+                    'Failed to load Google Sheet. Check permissions and configuration.';
+
+            }
+
+        }
+
+        function parseNetWorth(value) {
+
+            return Number(
+
+                String(value)
+
+                    .replace(
+                        /\$/g,
+                        ''
+                    )
+
+                    .replace(
+                        /,/g,
+                        ''
+                    )
+
+                    .trim()
+
+            ) || 0;
+
+        }
+
+        // Create 3D obj
+        function createObjects(data) {
+            // To remove previous obj
+            objects.forEach(
+
+                object => {
+                    scene.remove(
+                        object
+                    );
+
+                }
+
+            );
+
+            objects = [];
+            targets = {
+                table: [],
+                sphere: [],
+                helix: [],
+                grid: []
+            };
+
+            // Create each person tile
+            for (
+                let i = 0;
+                i < data.length;
+                i++
+            ) {
+
+                const person =
+                    data[i];
+
+                const element =
+                    document.createElement(
+                        'div'
+                    );
+
+                element.className =
+                    'element';
+                /*
+                 * Net Worth  Background Color:
+                 * Red    < $100K
+                 * Orange > $100K
+                 * Green  > $200K
+                 */
+
+                if (
+                    person.netWorth < 100000
+
+                ) {
+                    element.style.background =
+                        'rgba(180, 30, 30, 0.85)';
+
+                }
+
+                else if (
+                    person.netWorth > 200000
+
+                ) {
+                    element.style.background =
+                        'rgba(30, 150, 60, 0.85)';
+
+                }
+
+                else {
+                    element.style.background =
+                        'rgba(220, 120, 20, 0.85)';
+
+                }
+
+                //Photo
+                if (person.photo) {
+
+                    const image =
+                        document.createElement(
+                            'img'
+                        );
+
+                    image.className =
+                        'photo';
+
+                    image.src =
+                        person.photo;
+
+                    image.onerror =
+                        function () {
+
+                            this.style.display =
+                                'none';
+
+                        };
+
+                    element.appendChild(
+                        image
+                    );
+                }
+
+                const name =
+                    document.createElement(
+                        'div'
+                    );
+
+                name.className =
+                    'name';
+
+                name.textContent =
+                    person.name;
+
+                element.appendChild(
+                    name
+                );
+
+                const details =
+                    document.createElement(
+                        'div'
+                    );
+
+                details.className =
+                    'details';
+
+                details.innerHTML =
+
+                    'Age: ' +
+                    escapeHTML(
+                        person.age
+                    ) +
+
+                    '<br>Country: ' +
+                    escapeHTML(
+                        person.country
+                    ) +
+
+                    '<br>Interest: ' +
+                    escapeHTML(
+                        person.interest
+                    ) +
+
+                    '<div class="worth">' +
+
+                    'Net Worth: $' +
+
+                    person.netWorth
+                        .toLocaleString() +
+
+                    '</div>';
+
+                element.appendChild(
+                    details
+                );
+
+                const object =
+                    new CSS3DObject(
+                        element
+                    );
+
+                object.position.x =
+                    Math.random() * 4000 -
+                    2000;
+
+                object.position.y =
+                    Math.random() * 4000 -
+                    2000;
+
+                object.position.z =
+                    Math.random() * 4000 -
+                    2000;
+
+                scene.add(object);
+                objects.push(object);
+
+            }
+
+            //To generate the layout
+            createTable();
+            createSphere();
+            createDoubleHelix();
+            createGrid();
+
+            //Start from table
+            transform(
+                targets.table,
+                0
+            );
+        }
+
+        //Table
+        function createTable() {
+            const columns = 20;
+            const horizontalSpacing = 150;
+            const verticalSpacing = 190;
+
+            for (
+                let i = 0;
+                i < objects.length;
+                i++
+            ) {
+                const object =
+                    new THREE.Object3D();
+
+                const column = i % columns;
+                const row = Math.floor(i / columns);
+
+                object.position.x =
+                    column * horizontalSpacing -
+                    ((columns - 1) * horizontalSpacing) / 2;
+
+                object.position.y =
+                    -row * verticalSpacing +
+                    ((Math.ceil(objects.length / columns) - 1) *
+                        verticalSpacing) / 2;
+
+                object.position.z = 0;
+
+                targets.table.push(object);
+            }
+        }
+
+        //Sphere
+        function createSphere() {
+
+            const vector =
+                new THREE.Vector3();
+
+            for (
+                let i = 0;
+                i < objects.length;
+                i++
+
+            ) {
+
+                const phi =
+                    Math.acos(
+                        -1 +
+                        (2 * i) /
+                        objects.length
+
+                    );
+
+                const theta =
+                    Math.sqrt(
+                        objects.length *
+                        Math.PI
+                    ) * phi;
+
+                const object =
+                    new THREE.Object3D();
+
+                object.position
+                    .setFromSphericalCoords(
+                        900,
+                        phi,
+                        theta
+                    );
+
+                vector.copy(
+                    object.position
+                ).multiplyScalar(2);
+
+                object.lookAt(
+                    vector
+                );
+
+                targets.sphere.push(
+                    object
+                );
+            }
+        }
+
+        // Double helix
+        function createDoubleHelix() {
+            const radius = 850;
+            const verticalStep = 45;
+            const angleStep = 0.20;
+
+            for (
+                let i = 0;
+                i < objects.length;
+                i++
+
+            ) {
+                const strand =
+                    i % 2;
+
+                const index =
+                    Math.floor(i / 2);
+
+                const angle =
+                    index * angleStep +
+                    strand * Math.PI;
+
+                const object =
+                    new THREE.Object3D();
+
+                object.position.x =
+
+                    radius *
+                    Math.cos(angle);
+
+                object.position.y =
+
+                    -(index * verticalStep) +
+
+                    2250;
+
+                object.position.z =
+
+                    radius *
+                    Math.sin(angle);
+
+                const lookAt =
+                    new THREE.Vector3(
+
+                        object.position.x * 2,
+
+                        object.position.y,
+
+                        object.position.z * 2
+
+                    );
+
+                object.lookAt(
+                    lookAt
+                );
+
+                targets.helix.push(
+                    object
+                );
+
+            }
+
+        }
+
+        //Modified grid size
+        function createGrid() {
+
+            for (
+                let i = 0;
+                i < objects.length;
+                i++
+            ) {
+
+                const object =
+                    new THREE.Object3D();
+
+                object.position.x =
+                    (i % 5) * 300 -
+                    600;
+
+                object.position.y =
+                    -(Math.floor(i / 5) % 4) *
+                    300 +
+                    450;
+
+                object.position.z =
+                    Math.floor(i / 20) * 350 -
+                    1575;
+
+                targets.grid.push(
+                    object
+                );
+
+            }
+
+        }
+
+        //Transform layer
+        function transform(
+            targetArray,
+            duration
+        ) {
+
+            for (
+                let i = 0;
+                i < objects.length;
+                i++
+            ) {
+
+                const object =
+                    objects[i];
+
+                const target =
+                    targetArray[i];
+
+                const startPosition =
+                    object.position.clone();
+
+                const startRotation =
+                    object.rotation.clone();
+
+                const startTime =
+                    Date.now();
+
+                function animateObject() {
+                    const elapsed =
+                        Date.now() -
+                        startTime;
+
+                    const progress =
+                        duration === 0
+                            ? 1
+                            : Math.min(
+                                elapsed /
+                                duration,
+                                1
+                            );
+
+
+                    const eased =
+                        1 -
+                        Math.pow(
+                            1 - progress,
+                            3
+                        );
+
+                    object.position.lerpVectors(
+                        startPosition,
+                        target.position,
+                        eased
+                    );
+
+
+                    object.rotation.x =
+                        startRotation.x +
+                        (
+                            target.rotation.x -
+                            startRotation.x
+                        ) * eased;
+
+
+                    object.rotation.y =
+                        startRotation.y +
+                        (
+                            target.rotation.y -
+                            startRotation.y
+                        ) * eased;
+
+
+                    object.rotation.z =
+                        startRotation.z +
+                        (
+                            target.rotation.z -
+                            startRotation.z
+                        ) * eased;
+
+
+                    render();
+
+                    if (
+                        progress < 1
+                    ) {
+                        requestAnimationFrame(
+                            animateObject
+                        );
+
+                    }
+
+                }
+                animateObject();
+
+            }
+
+        }
+
+        function escapeHTML(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function render() {
+
+            renderer.render(
+                scene,
+                camera
+            );
+
+        }
+
+        function animate() {
+
+            requestAnimationFrame(
+                animate
+            );
+
+            controls.update();
+
+        }
+
+        //Window size
+        function onWindowResize() {
+
+            camera.aspect =
+
+                window.innerWidth /
+                window.innerHeight;
+
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(
+                window.innerWidth,
+                window.innerHeight
+            );
+
+            render();
+
+        }
+
+        //Sign Out
+        document
+            .getElementById('signout')
+            .addEventListener(
+                'click',
+                function () {
+
+                    // Get current token
+                    const token =
+                        gapi.client.getToken();
+
+                    // Revoke Google access
+                    if (token) {
+
+                        google.accounts.oauth2.revoke(
+                            token.access_token
+                        );
+
+                    }
+
+                    // Clear token
+                    gapi.client.setToken(null);
+
+                    // Remove all 3D objects
+                    objects.forEach(
+                        object => {
+
+                            scene.remove(object);
+
+                        }
+                    );
+
+                    objects = [];
+
+                    // Reset targets
+                    targets = {
+
+                        table: [],
+                        sphere: [],
+                        helix: [],
+                        grid: []
+
+                    };
+
+                    // Hide visualization
+                    document.getElementById(
+                        'container'
+                    ).style.visibility = 'hidden';
+
+                    // Hide Sign Out
+                    document.getElementById(
+                        'signout'
+                    ).style.display = 'none';
+
+                    // Hide authorization
+                    document.getElementById(
+                        'authorizeButton'
+                    ).style.display = 'none';
+
+                    // Change welcome message
+                    document.getElementById(
+                        'welcomeTitle'
+                    ).textContent =
+                        'Welcome Back';
+
+                    document.getElementById(
+                        'welcomeMessage'
+                    ).textContent =
+                        'Please sign in with your Google account to continue viewing the 3D data visualization.';
+
+                    // Show login screen
+                    document.getElementById(
+                        'welcomeOverlay'
+                    ).style.display = 'flex';
+
+                    // Reset status
+                    document.getElementById(
+                        'status'
+                    ).textContent =
+                        'Please sign in with Google.';
+
+                    render();
+
+                }
+            );
+    </script>
+
+    <div id="footer">
+        DEpthView — Kasatria Assignment
+        <br>
+        <a href="privacy.html">Privacy Policy</a>
+        |
+        <a href="terms.html">Terms of Service</a>
+    </div>
+
+</body>
+
+</html>
