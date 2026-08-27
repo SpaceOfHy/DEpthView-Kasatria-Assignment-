@@ -1078,51 +1078,29 @@
 
         //Table
         function createTable() {
-
             const columns = 20;
+            const horizontalSpacing = 155;
+            const verticalSpacing = 175;
 
-            const horizontalSpacing = 150;
-
-            const verticalSpacing = 190;
-
-            for (
-
-                let i = 0;
-
-                i < objects.length;
-
-                i++
-
-            ) {
-
-                const object =
-
-                    new THREE.Object3D();
+            for (let i = 0; i < objects.length; i++) {
+                const object = new THREE.Object3D();
 
                 const column = i % columns;
-
                 const row = Math.floor(i / columns);
 
                 object.position.x =
-
                     column * horizontalSpacing -
-
                     ((columns - 1) * horizontalSpacing) / 2;
 
                 object.position.y =
-
                     -row * verticalSpacing +
-
                     ((Math.ceil(objects.length / columns) - 1) *
-
                         verticalSpacing) / 2;
 
                 object.position.z = 0;
 
                 targets.table.push(object);
-
             }
-
         }
 
         //Sphere
@@ -1276,8 +1254,11 @@
         // Tetrahedron
         function createTetrahedron() {
 
-            // Smaller tetrahedron so the larger cards remain visible
-            const size = 950;
+            // Increase tetrahedron size based on number of records
+            const size = Math.max(
+                1400,
+                Math.ceil(Math.sqrt(objects.length)) * 180
+            );
 
             // Four vertices
             const vertices = [
@@ -1286,19 +1267,16 @@
                     size,
                     0
                 ),
-
                 new THREE.Vector3(
                     -size,
                     -size * 0.45,
                     size * 0.75
                 ),
-
                 new THREE.Vector3(
                     size,
                     -size * 0.45,
                     size * 0.75
                 ),
-
                 new THREE.Vector3(
                     0,
                     -size * 0.45,
@@ -1317,6 +1295,7 @@
             let resolution = 3;
             let allFacePoints = [];
 
+            // Generate enough positions for all cards
             while (true) {
 
                 allFacePoints = [];
@@ -1354,7 +1333,7 @@
                             .normalize();
 
                     const points = [];
-                    const margin = 0.12;
+                    const margin = 0.18;
 
                     for (
                         let row = 0;
@@ -1390,9 +1369,18 @@
                                 new THREE.Vector3();
 
                             point
-                                .addScaledVector(a, w)
-                                .addScaledVector(b, u)
-                                .addScaledVector(c, v);
+                                .addScaledVector(
+                                    a,
+                                    w
+                                )
+                                .addScaledVector(
+                                    b,
+                                    u
+                                )
+                                .addScaledVector(
+                                    c,
+                                    v
+                                );
 
                             points.push({
                                 position: point,
@@ -1411,16 +1399,18 @@
                         0
                     );
 
-                // Enough positions generated
                 if (
                     totalPoints >= objects.length
                 ) {
                     break;
                 }
 
-                // Increase resolution
                 resolution++;
             }
+
+            console.log(
+                `Tetrahedron size: ${size}`
+            );
 
             console.log(
                 `Tetrahedron resolution: ${resolution}`
@@ -1438,7 +1428,7 @@
             console.log(
                 `Required positions: ${objects.length}`
             );
-
+            
             const totalObjects =
                 objects.length;
 
@@ -1488,15 +1478,21 @@
                     const object =
                         new THREE.Object3D();
 
-                    // Position
+                    /*
+                     * Position card on tetrahedron
+                     */
                     object.position.copy(
                         point.position
                     );
 
-                    // Make the card face outward
+                    object.position.add(
+                        point.normal.clone()
+                            .multiplyScalar(15)
+                    );
+
                     const lookAt =
                         new THREE.Vector3()
-                            .copy(point.position)
+                            .copy(object.position)
                             .add(point.normal);
 
                     object.lookAt(
