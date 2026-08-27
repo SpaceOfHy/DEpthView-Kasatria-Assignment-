@@ -1078,19 +1078,11 @@
 
         //Table
         function createTable() {
-
-            const columns = 10;
-            const horizontalSpacing = 145;
+            const columns = 20;
+            const horizontalSpacing = 155;
             const verticalSpacing = 175;
 
-            const rows = Math.ceil(objects.length / columns);
-
-            for (
-                let i = 0;
-                i < objects.length;
-                i++
-            ) {
-
+            for (let i = 0; i < objects.length; i++) {
                 const object = new THREE.Object3D();
 
                 const column = i % columns;
@@ -1102,7 +1094,8 @@
 
                 object.position.y =
                     -row * verticalSpacing +
-                    ((rows - 1) * verticalSpacing) / 2;
+                    ((Math.ceil(objects.length / columns) - 1) *
+                        verticalSpacing) / 2;
 
                 object.position.z = 0;
 
