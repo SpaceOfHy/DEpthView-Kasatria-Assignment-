@@ -173,15 +173,16 @@
         }
 
         .element {
-            width: 85px;
-            height: 110px;
+            width: 120px;
+            height: 150px;
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.3);
             text-align: center;
-            border-radius: 5px;
+            border-radius: 6px;
             overflow: hidden;
             box-sizing: border-box;
             transition: box-shadow 0.2s ease;
+            padding: 5px;
         }
 
         .element:hover {
@@ -190,35 +191,41 @@
         }
 
         .photo {
-            width: 32px;
-            height: 32px;
+            width: 38px;
+            height: 38px;
             object-fit: cover;
             border-radius: 50%;
-            margin-top: 6px;
+            margin-top: 3px;
             background: rgba(255, 255, 255, 0.15);
         }
 
         .name {
             margin-top: 5px;
-            padding: 0 3px;
+            padding: 0 4px;
             color: white;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
+            line-height: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .details {
-            margin-top: 5px;
-            padding: 0 5px;
+            margin-top: 6px;
+            padding: 0 4px;
             color: rgba(255, 255, 255, 0.9);
-            font-size: 8px;
-            line-height: 12px;
+            font-size: 9px;
+            line-height: 14px;
+            word-wrap: break-word;
         }
 
         .worth {
-            margin-top: 3px;
+            margin-top: 5px;
             font-weight: bold;
             color: white;
-            font-size: 8px;
+            font-size: 9px;
+            line-height: 13px;
         }
 
         #footer {
@@ -446,7 +453,7 @@
                 );
 
             controls.rotateSpeed = 0.5;
-            controls.minDistance = 500;
+            controls.minDistance = 700;
             controls.maxDistance = 6000;
 
             controls.addEventListener(
@@ -1071,9 +1078,9 @@
 
         //Table
         function createTable() {
-            const columns = 20;
-            const horizontalSpacing = 150;
-            const verticalSpacing = 190;
+            const columns = 10;
+            const horizontalSpacing = 155;
+            const verticalSpacing = 175;
 
             for (
                 let i = 0;
@@ -1133,7 +1140,7 @@
 
                 object.position
                     .setFromSphericalCoords(
-                        900,
+                        750,
                         phi,
                         theta
                     );
@@ -1154,8 +1161,8 @@
 
         // Double helix
         function createDoubleHelix() {
-            const radius = 850;
-            const verticalStep = 45;
+            const radius = 950;
+            const verticalStep = 65;
             const angleStep = 0.20;
 
             for (
@@ -1252,8 +1259,8 @@
         // Tetrahedron
         function createTetrahedron() {
 
-            // Size of the tetrahedron
-            const size = 1250;
+            // Smaller tetrahedron so the larger cards remain visible
+            const size = 950;
 
             // Four vertices
             const vertices = [
@@ -1290,88 +1297,138 @@
                 [1, 3, 2]
             ];
 
-            const resolution = Math.ceil(
-                Math.sqrt(objects.length / 4) * 3
-            );
-
-            const margin = 0.08;
-
+            let resolution = 3;
             let allFacePoints = [];
 
-            for (
-                let faceIndex = 0;
-                faceIndex < faces.length;
-                faceIndex++
-            ) {
+            while (true) {
 
-                const a = vertices[faces[faceIndex][0]];
-                const b = vertices[faces[faceIndex][1]];
-                const c = vertices[faces[faceIndex][2]];
-
-                // Calculate face normal
-                const edge1 = new THREE.Vector3()
-                    .subVectors(b, a);
-
-                const edge2 = new THREE.Vector3()
-                    .subVectors(c, a);
-
-                const normal = new THREE.Vector3()
-                    .crossVectors(edge1, edge2)
-                    .normalize();
-
-                const points = [];
+                allFacePoints = [];
 
                 for (
-                    let row = 0;
-                    row <= resolution;
-                    row++
+                    let faceIndex = 0;
+                    faceIndex < faces.length;
+                    faceIndex++
                 ) {
 
+                    const a =
+                        vertices[faces[faceIndex][0]];
+
+                    const b =
+                        vertices[faces[faceIndex][1]];
+
+                    const c =
+                        vertices[faces[faceIndex][2]];
+
+                    // Calculate face normal
+                    const edge1 =
+                        new THREE.Vector3()
+                            .subVectors(b, a);
+
+                    const edge2 =
+                        new THREE.Vector3()
+                            .subVectors(c, a);
+
+                    const normal =
+                        new THREE.Vector3()
+                            .crossVectors(
+                                edge1,
+                                edge2
+                            )
+                            .normalize();
+
+                    const points = [];
+                    const margin = 0.12;
+
                     for (
-                        let column = 0;
-                        column <= resolution - row;
-                        column++
+                        let row = 0;
+                        row <= resolution;
+                        row++
                     ) {
 
-                        let u =
-                            column / resolution;
-
-                        let v =
-                            row / resolution;
-
-                        let w =
-                            1 - u - v;
-
-                        // Keep points away from triangle edges
-                        if (
-                            u < margin ||
-                            v < margin ||
-                            w < margin
+                        for (
+                            let column = 0;
+                            column <= resolution - row;
+                            column++
                         ) {
-                            continue;
+
+                            const u =
+                                column / resolution;
+
+                            const v =
+                                row / resolution;
+
+                            const w =
+                                1 - u - v;
+
+                            // Keep cards away from edges
+                            if (
+                                u < margin ||
+                                v < margin ||
+                                w < margin
+                            ) {
+                                continue;
+                            }
+
+                            const point =
+                                new THREE.Vector3();
+
+                            point
+                                .addScaledVector(a, w)
+                                .addScaledVector(b, u)
+                                .addScaledVector(c, v);
+
+                            points.push({
+                                position: point,
+                                normal: normal.clone()
+                            });
                         }
-
-                        const point =
-                            new THREE.Vector3();
-
-                        point
-                            .addScaledVector(a, w)
-                            .addScaledVector(b, u)
-                            .addScaledVector(c, v);
-
-                        points.push({
-                            position: point,
-                            normal: normal
-                        });
                     }
+
+                    allFacePoints.push(points);
                 }
 
-                allFacePoints.push(points);
+                const totalPoints =
+                    allFacePoints.reduce(
+                        (sum, face) =>
+                            sum + face.length,
+                        0
+                    );
+
+                // Enough positions generated
+                if (
+                    totalPoints >= objects.length
+                ) {
+                    break;
+                }
+
+                // Increase resolution
+                resolution++;
             }
 
-            const totalObjects = objects.length;
+            console.log(
+                `Tetrahedron resolution: ${resolution}`
+            );
+
+            console.log(
+                `Available positions: ${allFacePoints.reduce(
+                    (sum, face) =>
+                        sum + face.length,
+                    0
+                )
+                }`
+            );
+
+            console.log(
+                `Required positions: ${objects.length}`
+            );
+
+            const totalObjects =
+                objects.length;
+
             const baseCount =
-                Math.floor(totalObjects / 4);
+                Math.floor(
+                    totalObjects / 4
+                );
 
             const remainder =
                 totalObjects % 4;
@@ -1386,7 +1443,11 @@
 
                 const faceCount =
                     baseCount +
-                    (faceIndex < remainder ? 1 : 0);
+                    (
+                        faceIndex < remainder
+                            ? 1
+                            : 0
+                    );
 
                 const points =
                     allFacePoints[faceIndex];
@@ -1396,11 +1457,10 @@
                     i < faceCount;
                     i++
                 ) {
-                    
-                    //Safecheck
+
                     if (
-                        objectIndex >= objects.length ||
-                        i >= points.length
+                        objectIndex >=
+                        objects.length
                     ) {
                         break;
                     }
@@ -1416,12 +1476,15 @@
                         point.position
                     );
 
+                    // Make the card face outward
                     const lookAt =
                         new THREE.Vector3()
                             .copy(point.position)
                             .add(point.normal);
 
-                    object.lookAt(lookAt);
+                    object.lookAt(
+                        lookAt
+                    );
 
                     targets.tetrahedron.push(
                         object
@@ -1431,17 +1494,10 @@
                 }
             }
 
-            if (
-                objectIndex < objects.length
-            ) {
-
-                console.warn(
-                    `Tetrahedron generated ${objectIndex} positions for ${objects.length} records.`
-                );
-            }
-
             console.log(
-                `Tetrahedron layout: ${targets.tetrahedron.length} unique positions for ${objects.length} records.`
+                `Tetrahedron layout: ${targets.tetrahedron.length
+                } positions for ${objects.length
+                } records.`
             );
         }
 
