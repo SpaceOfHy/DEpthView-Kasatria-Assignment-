@@ -1078,29 +1078,51 @@
 
         //Table
         function createTable() {
-            const columns = 20;
-            const horizontalSpacing = 155;
-            const verticalSpacing = 175;
 
-            for (let i = 0; i < objects.length; i++) {
-                const object = new THREE.Object3D();
+            const columns = 20;
+
+            const horizontalSpacing = 150;
+
+            const verticalSpacing = 190;
+
+            for (
+
+                let i = 0;
+
+                i < objects.length;
+
+                i++
+
+            ) {
+
+                const object =
+
+                    new THREE.Object3D();
 
                 const column = i % columns;
+
                 const row = Math.floor(i / columns);
 
                 object.position.x =
+
                     column * horizontalSpacing -
+
                     ((columns - 1) * horizontalSpacing) / 2;
 
                 object.position.y =
+
                     -row * verticalSpacing +
+
                     ((Math.ceil(objects.length / columns) - 1) *
+
                         verticalSpacing) / 2;
 
                 object.position.z = 0;
 
                 targets.table.push(object);
+
             }
+
         }
 
         //Sphere
